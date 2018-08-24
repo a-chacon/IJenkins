@@ -1,0 +1,66 @@
+{
+    "name": "jint",
+    "displayName": "jenkintegration",
+    "description": "Integracion of jenkins to visual code",
+    "version": "0.0.1",
+    "publisher": "AndresC",
+    "engines": {
+        "vscode": "^1.26.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.configJenkinsCredentials",
+        "onCommand:extension.excecuteJenkinsJob",
+        "onCommand:extension.excecuteJenkinsJob",
+        "onCommand:extension.jenkinsHelp",
+        "onCommand:extension.informationOfLastBuild"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.jenkinsHelp",
+                "title": "Jenkins help"
+            },
+            {
+                "command": "extension.configJenkinsCredentials",
+                "title": "Configuration of jenkin's account"
+            },
+            {
+                "command": "extension.excecuteJenkinsJob",
+                "title": "Excecute jenkins job"
+            },
+            {
+                "command": "extension.excecuteLastJenkinsJob",
+                "title": "Excecute last jenkins job"
+            },
+            {
+                "command": "extension.informationOfLastBuild",
+                "title": "View information of last build"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.21",
+        "tslint": "^5.8.0",
+        "@types/node": "^8.10.25",
+        "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "@types/request-promise-native": "^1.0.15",
+        "request": "^2.88.0",
+        "request-promise-native": "^1.0.5",
+        "vsce": "^1.46.0",
+        "web-request": "^1.0.7"
+    }
+}
