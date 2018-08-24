@@ -1,22 +1,29 @@
 # jint README
 
-This is the README for your extension "jint". After writing up a brief description, we recommend including the following sections.
+Extension para visual studio code con la cual puedes ejecutar trabajos de jenkins.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+La extension cuenta con las siguientes funciones:
 
 For example if there is an image subfolder under your extension project workspace:
 
 \!\[feature X\]\(images/feature-x.png\)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Para una instalacion manual se debe instalar la libreria web-request definida en package.json dependencias.
+
+Copiar archivos en:
+
+Windows %USERPROFILE%\.vscode\extensions
+macOS ~/.vscode/extensions
+Linux ~/.vscode/extensions
 
 ## Extension Settings
+
+Para configurar la url del jenkins en el cual se van a ejecutar los trabajos debes modificar la constante URL definida en src/extension.ts
 
 Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
 
@@ -37,15 +44,7 @@ Users appreciate release notes as you update your extension.
 
 ### 1.0.0
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+Primera version con funciones principales.
 
 -----------------------------------------------------------------------------------------------------------
 
