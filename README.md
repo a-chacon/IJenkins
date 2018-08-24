@@ -15,11 +15,13 @@ For example if there is an image subfolder under your extension project workspac
 
 Para una instalacion manual se debe instalar la libreria web-request definida en package.json dependencias.
 
-Copiar archivos en:
+1.Copiar archivos en:
 
 Windows %USERPROFILE%\.vscode\extensions
 macOS ~/.vscode/extensions
 Linux ~/.vscode/extensions
+
+2.npm install
 
 ## Extension Settings
 
