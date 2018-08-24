@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     //global variables while the extension is active
     //put here your jenkins url
-    const URL = 'http://localhost:8080/';
+    const URL = 'http://www.mycognitiva.io:8080/';
     var USER: any;
     var PASS: any;
     var LAST_VIEW: any;

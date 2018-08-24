@@ -17,9 +17,9 @@ Para una instalacion manual se debe instalar la libreria web-request definida en
 
 1.Copiar archivos en:
 
-Windows %USERPROFILE%\.vscode\extensions
-macOS ~/.vscode/extensions
-Linux ~/.vscode/extensions
+-Windows %USERPROFILE%\.vscode\extensions
+-macOS ~/.vscode/extensions
+-Linux ~/.vscode/extensions
 
 2.npm install
 
