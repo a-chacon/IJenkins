@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     //global variables while the extension is active
     //put here your jenkins url
-    const URL = 'http://www.mycognitiva.io:8080/';
+    const URL = 'http://localhost:8080/';
     var USER: any;
     var PASS: any;
     var LAST_VIEW: any;
@@ -44,19 +44,29 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         } else {
 
-            if (await checkUserConnection(USER, PASS, URL)) {
-                //if conect with the credentials all is ok for next connections
-                CRUMB = await searchCrumb(USER, PASS, URL);
-                console.log('CRUMB object: ' + JSON.stringify(CRUMB));
-                vscode.window.showInformationMessage('Account configured!');
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Loading...'}, p => {
+                return new Promise((resolve, reject) => {
+                    let handle = setInterval(async () => {
 
-            } else {
-
-                vscode.window.showErrorMessage('Problems with your account, try set up it again!');
-                USER = '';
-                PASS = '';
-
-            }
+                        if (await checkUserConnection(USER, PASS, URL)) {
+                            //if conect with the credentials all is ok for next connections
+                            CRUMB = await searchCrumb(USER, PASS, URL);
+                            console.log('CRUMB object: ' + JSON.stringify(CRUMB));
+                            clearInterval(handle);
+                            resolve();
+                            vscode.window.showInformationMessage('Account configured!');
+            
+                        } else {
+                            clearInterval(handle);
+                            resolve();
+                            vscode.window.showErrorMessage('Problems with your account, try set up it again!');
+                            USER = '';
+                            PASS = '';
+            
+                        }
+                    }, 1000);
+                });
+            });
         }
     });
 
@@ -88,10 +98,26 @@ export function activate(context: vscode.ExtensionContext) {
         //confirm the excecute
         var confirm = await vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
 
+        
         if (confirm === 'yes') {
-            if (excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
-                vscode.window.showInformationMessage('Job excecuted!');
-            }
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Loading...'}, p => {
+                return new Promise((resolve, reject) => {
+                    let handle = setInterval(async () => {
+
+                        if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
+                            vscode.window.showInformationMessage('Job excecuted!');
+                            clearInterval(handle);
+                            resolve();
+                        }else{
+                            vscode.window.showErrorMessage('we have a problem excecuting the job :(');
+                            clearInterval(handle);
+                            resolve();
+                        }
+
+                    }, 1000);
+                });
+            });
+            
         } else {
             vscode.window.showInformationMessage('Canceled!');
         }
@@ -109,9 +135,23 @@ export function activate(context: vscode.ExtensionContext) {
         var confirm = await vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
 
         if (confirm === 'yes') {
-            if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
-                vscode.window.showInformationMessage('Job excecuted!');
-            }
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Loading...'}, p => {
+                return new Promise((resolve, reject) => {
+                    let handle = setInterval(async () => {
+
+                        if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
+                            vscode.window.showInformationMessage('Job excecuted!');
+                            clearInterval(handle);
+                            resolve();
+                        }else{
+                            vscode.window.showErrorMessage('we have a problem excecuting the job :(');
+                            clearInterval(handle);
+                            resolve();
+                        }
+
+                    }, 1000);
+                });
+            });
         } else {
             vscode.window.showInformationMessage('Canceled!');
         }
@@ -120,8 +160,26 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand('extension.jenkinsHelp', async () => {
         //list of commands avalaible
+        
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Cargando'}, p => {
+            return new Promise((resolve, reject) => {
+                p.report({message: 'Start working...' });
+                let count= 0;
+                let handle = setInterval(() => {
+                    count++;
+                    p.report({message: 'Worked ' + count + ' steps' });
+                    if (count >= 10) {
+                        clearInterval(handle);
+                        resolve();
+                    }
+                }, 1000);
+            });
+        });
         vscode.window.showQuickPick(vscode.commands.getCommands(true));
         console.log('commands : '+vscode.commands.getCommands(true));
+
+
+
     });
 
     //context.subscriptions.push(disposable);
@@ -227,7 +285,6 @@ async function excecuteJob(view: any, job: any, user: string, pass: string, url:
     } else if (statusCode === 201) {
         return true;
     }
-
     return false;
 }
 

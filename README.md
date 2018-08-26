@@ -23,6 +23,8 @@ Para una instalacion manual se debe instalar la libreria web-request definida en
 
 2.npm install
 
+3. configurar tu url de jenkins en out/extension.js variable : const URL
+
 ## Extension Settings
 
 Para configurar la url del jenkins en el cual se van a ejecutar los trabajos debes modificar la constante URL definida en src/extension.ts
