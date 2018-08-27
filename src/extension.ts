@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     //global variables while the extension is active
     //put here your jenkins url
-    const URL = 'http://localhost:8080/';
+    var URL:any = 'http://localhost:8080/';
     var USER: any;
     var PASS: any;
     var LAST_VIEW: any;
@@ -161,6 +161,15 @@ export function activate(context: vscode.ExtensionContext) {
 
         vscode.window.showQuickPick(vscode.commands.getCommands(true));
         console.log('commands : ' + vscode.commands.getCommands(true));
+
+    });
+
+
+    vscode.commands.registerCommand('extension.changeURL', async () => {
+        
+        //confirm the excecute
+        URL = await vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
+
 
     });
 

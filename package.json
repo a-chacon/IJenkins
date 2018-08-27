@@ -10,12 +10,14 @@
     "categories": [
         "Other"
     ],
+    "icon": "jenkins.jpeg",
     "activationEvents": [
         "onCommand:extension.configJenkinsCredentials",
         "onCommand:extension.excecuteJenkinsJob",
         "onCommand:extension.excecuteJenkinsJob",
         "onCommand:extension.jenkinsHelp",
-        "onCommand:extension.informationOfLastBuild"
+        "onCommand:extension.informationOfLastBuild",
+        "onCommand:extension.changeURL"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -39,6 +41,10 @@
             {
                 "command": "extension.informationOfLastBuild",
                 "title": "View information of last build"
+            },
+            {
+                "command": "extension.changeURL",
+                "title": "change jenkins URL"
             }
         ]
     },
@@ -62,5 +68,14 @@
         "request-promise-native": "^1.0.5",
         "vsce": "^1.46.0",
         "web-request": "^1.0.7"
-    }
+    },
+    "license": "SEE LICENSE IN LICENSE.txt",
+    "bugs": {
+        "email": "andres.ch@protonmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Taurus95/IJenkins.git"
+    },
+    "homepage": "https://github.com/Taurus95/IJenkins/README.md"
 }
