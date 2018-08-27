@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     //global variables while the extension is active
     //put here your jenkins url
-    var URL:any = 'http://localhost:8080/';
+    var URL: any = 'http://www.mycognitiva.io:8080/';
     var USER: any;
     var PASS: any;
     var LAST_VIEW: any;
@@ -45,26 +45,22 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
 
             vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Checking...' }, p => {
-                return new Promise((resolve, reject) => {
-                    let handle = setInterval(async () => {
+                return new Promise(async (resolve, reject) => {
+                    if (await checkUserConnection(USER, PASS, URL)) {
+                        //if conect with the credentials all is ok for next connections
+                        CRUMB = await searchCrumb(USER, PASS, URL);
+                        console.log('CRUMB object: ' + JSON.stringify(CRUMB));
+                        resolve();
+                        vscode.window.showInformationMessage('Account configured!');
 
-                        if (await checkUserConnection(USER, PASS, URL)) {
-                            //if conect with the credentials all is ok for next connections
-                            CRUMB = await searchCrumb(USER, PASS, URL);
-                            console.log('CRUMB object: ' + JSON.stringify(CRUMB));
-                            clearInterval(handle);
-                            resolve();
-                            vscode.window.showInformationMessage('Account configured!');
+                    } else {
 
-                        } else {
-                            clearInterval(handle);
-                            resolve();
-                            vscode.window.showErrorMessage('Problems with your account, try set up it again!');
-                            USER = '';
-                            PASS = '';
+                        resolve();
+                        vscode.window.showErrorMessage('Problems with your account, try set up it again!');
+                        USER = '';
+                        PASS = '';
 
-                        }
-                    }, 1000);
+                    }
                 });
             });
         }
@@ -102,18 +98,18 @@ export function activate(context: vscode.ExtensionContext) {
         if (confirm === 'yes') {
             vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Building...' }, p => {
                 return new Promise(async (resolve, reject) => {
-                        if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
-                            //esperar a que termine el trabajo ejecutado
-                            await checkFinishLast(USER, PASS, URL, LAST_JOB);
-                            //termino de ejecucion
-                            vscode.window.showInformationMessage('Job excecuted!');
-                            resolve();
+                    if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
+                        //esperar a que termine el trabajo ejecutado
+                        await checkFinishLast(USER, PASS, URL, LAST_JOB);
+                        //termino de ejecucion
+                        vscode.window.showInformationMessage('Job excecuted!');
+                        resolve();
 
-                        } else {
-                            vscode.window.showErrorMessage('we have a problem excecuting the job :(');
-                            resolve();
+                    } else {
+                        vscode.window.showErrorMessage('we have a problem excecuting the job :(');
+                        resolve();
 
-                        }
+                    }
                 });
             });
 
@@ -136,18 +132,18 @@ export function activate(context: vscode.ExtensionContext) {
         if (confirm === 'yes') {
             vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Building...' }, p => {
                 return new Promise(async (resolve, reject) => {
-                        if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
-                            //esperar a que termine el trabajo ejecutado
-                            await checkFinishLast(USER, PASS, URL, LAST_JOB);
-                            //termino de ejecucion
-                            vscode.window.showInformationMessage('Job excecuted!');
-                            resolve();
+                    if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
+                        //esperar a que termine el trabajo ejecutado
+                        await checkFinishLast(USER, PASS, URL, LAST_JOB);
+                        //termino de ejecucion
+                        vscode.window.showInformationMessage('Job excecuted!');
+                        resolve();
 
-                        } else {
-                            vscode.window.showErrorMessage('we have a problem excecuting the job :(');
-                            resolve();
+                    } else {
+                        vscode.window.showErrorMessage('we have a problem excecuting the job :(');
+                        resolve();
 
-                        }
+                    }
                 });
             });
         } else {
@@ -158,18 +154,21 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand('extension.jenkinsHelp', async () => {
         //list of commands avalaible
-
+        
         vscode.window.showQuickPick(vscode.commands.getCommands(true));
-        console.log('commands : ' + vscode.commands.getCommands(true));
+        
+        console.log('commands : ' + typeof(vscode.commands.getCommands(true)));
 
     });
 
 
     vscode.commands.registerCommand('extension.changeURL', async () => {
-        
-        //confirm the excecute
-        URL = await vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
 
+        //confirm the excecute
+        URL = await vscode.window.showInputBox({ placeHolder: "Write the jenkins URL like that 'http://jenkins:8080/'" });
+        if (isUndefined(URL)) {
+            URL = '';
+        }
 
     });
 
@@ -280,7 +279,8 @@ async function excecuteJob(view: any, job: any, user: string, pass: string, url:
 }
 
 function checkConfigCredentials(user: string, pass: string): boolean {
-    if (user === '' || pass === '' || isUndefined(user) || isUndefined(pass)) {
+    if (user === '' || pass === '' || isUndefined(user) ||
+        isUndefined(pass)) {
         return false;
     }
     return true;

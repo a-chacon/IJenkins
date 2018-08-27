@@ -21,7 +21,7 @@ function activate(context) {
     console.log('Congratulations, your extension "jint" is now active!');
     //global variables while the extension is active
     //put here your jenkins url
-    const URL = 'http://localhost:8080/';
+    var URL = 'http://www.mycognitiva.io:8080/';
     var USER;
     var PASS;
     var LAST_VIEW;
@@ -48,25 +48,21 @@ function activate(context) {
         }
         else {
             vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Checking...' }, p => {
-                return new Promise((resolve, reject) => {
-                    let handle = setInterval(() => __awaiter(this, void 0, void 0, function* () {
-                        if (yield checkUserConnection(USER, PASS, URL)) {
-                            //if conect with the credentials all is ok for next connections
-                            CRUMB = yield searchCrumb(USER, PASS, URL);
-                            console.log('CRUMB object: ' + JSON.stringify(CRUMB));
-                            clearInterval(handle);
-                            resolve();
-                            vscode.window.showInformationMessage('Account configured!');
-                        }
-                        else {
-                            clearInterval(handle);
-                            resolve();
-                            vscode.window.showErrorMessage('Problems with your account, try set up it again!');
-                            USER = '';
-                            PASS = '';
-                        }
-                    }), 1000);
-                });
+                return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                    if (yield checkUserConnection(USER, PASS, URL)) {
+                        //if conect with the credentials all is ok for next connections
+                        CRUMB = yield searchCrumb(USER, PASS, URL);
+                        console.log('CRUMB object: ' + JSON.stringify(CRUMB));
+                        resolve();
+                        vscode.window.showInformationMessage('Account configured!');
+                    }
+                    else {
+                        resolve();
+                        vscode.window.showErrorMessage('Problems with your account, try set up it again!');
+                        USER = '';
+                        PASS = '';
+                    }
+                }));
             });
         }
     }));
@@ -144,7 +140,14 @@ function activate(context) {
     vscode.commands.registerCommand('extension.jenkinsHelp', () => __awaiter(this, void 0, void 0, function* () {
         //list of commands avalaible
         vscode.window.showQuickPick(vscode.commands.getCommands(true));
-        console.log('commands : ' + vscode.commands.getCommands(true));
+        console.log('commands : ' + typeof (vscode.commands.getCommands(true)));
+    }));
+    vscode.commands.registerCommand('extension.changeURL', () => __awaiter(this, void 0, void 0, function* () {
+        //confirm the excecute
+        URL = yield vscode.window.showInputBox({ placeHolder: "Write the jenkins URL like that 'http://jenkins:8080/'" });
+        if (util_1.isUndefined(URL)) {
+            URL = '';
+        }
     }));
     //context.subscriptions.push(disposable);
 }
@@ -247,7 +250,8 @@ function excecuteJob(view, job, user, pass, url, crumb) {
     });
 }
 function checkConfigCredentials(user, pass) {
-    if (user === '' || pass === '' || util_1.isUndefined(user) || util_1.isUndefined(pass)) {
+    if (user === '' || pass === '' || util_1.isUndefined(user) ||
+        util_1.isUndefined(pass)) {
         return false;
     }
     return true;
