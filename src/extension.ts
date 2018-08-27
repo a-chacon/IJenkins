@@ -44,7 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         } else {
 
-            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Loading...'}, p => {
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Checking...' }, p => {
                 return new Promise((resolve, reject) => {
                     let handle = setInterval(async () => {
 
@@ -55,14 +55,14 @@ export function activate(context: vscode.ExtensionContext) {
                             clearInterval(handle);
                             resolve();
                             vscode.window.showInformationMessage('Account configured!');
-            
+
                         } else {
                             clearInterval(handle);
                             resolve();
                             vscode.window.showErrorMessage('Problems with your account, try set up it again!');
                             USER = '';
                             PASS = '';
-            
+
                         }
                     }, 1000);
                 });
@@ -98,26 +98,25 @@ export function activate(context: vscode.ExtensionContext) {
         //confirm the excecute
         var confirm = await vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
 
-        
+
         if (confirm === 'yes') {
-            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Loading...'}, p => {
-                return new Promise((resolve, reject) => {
-                    let handle = setInterval(async () => {
-
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Building...' }, p => {
+                return new Promise(async (resolve, reject) => {
                         if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
+                            //esperar a que termine el trabajo ejecutado
+                            await checkFinishLast(USER, PASS, URL, LAST_JOB);
+                            //termino de ejecucion
                             vscode.window.showInformationMessage('Job excecuted!');
-                            clearInterval(handle);
                             resolve();
-                        }else{
-                            vscode.window.showErrorMessage('we have a problem excecuting the job :(');
-                            clearInterval(handle);
-                            resolve();
-                        }
 
-                    }, 1000);
+                        } else {
+                            vscode.window.showErrorMessage('we have a problem excecuting the job :(');
+                            resolve();
+
+                        }
                 });
             });
-            
+
         } else {
             vscode.window.showInformationMessage('Canceled!');
         }
@@ -135,21 +134,20 @@ export function activate(context: vscode.ExtensionContext) {
         var confirm = await vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
 
         if (confirm === 'yes') {
-            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Loading...'}, p => {
-                return new Promise((resolve, reject) => {
-                    let handle = setInterval(async () => {
-
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Building...' }, p => {
+                return new Promise(async (resolve, reject) => {
                         if (await excecuteJob(LAST_VIEW, LAST_JOB, USER, PASS, URL, CRUMB)) {
+                            //esperar a que termine el trabajo ejecutado
+                            await checkFinishLast(USER, PASS, URL, LAST_JOB);
+                            //termino de ejecucion
                             vscode.window.showInformationMessage('Job excecuted!');
-                            clearInterval(handle);
                             resolve();
-                        }else{
-                            vscode.window.showErrorMessage('we have a problem excecuting the job :(');
-                            clearInterval(handle);
-                            resolve();
-                        }
 
-                    }, 1000);
+                        } else {
+                            vscode.window.showErrorMessage('we have a problem excecuting the job :(');
+                            resolve();
+
+                        }
                 });
             });
         } else {
@@ -160,25 +158,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand('extension.jenkinsHelp', async () => {
         //list of commands avalaible
-        
-        vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Cargando'}, p => {
-            return new Promise((resolve, reject) => {
-                p.report({message: 'Start working...' });
-                let count= 0;
-                let handle = setInterval(() => {
-                    count++;
-                    p.report({message: 'Worked ' + count + ' steps' });
-                    if (count >= 10) {
-                        clearInterval(handle);
-                        resolve();
-                    }
-                }, 1000);
-            });
-        });
+
         vscode.window.showQuickPick(vscode.commands.getCommands(true));
-        console.log('commands : '+vscode.commands.getCommands(true));
-
-
+        console.log('commands : ' + vscode.commands.getCommands(true));
 
     });
 
@@ -302,7 +284,43 @@ async function searchCrumb(user: string, pass: string, url: string): Promise<JSO
             pass: pass
         }
     });
+
     //return the Crumb json
     return await JSON.parse(response.content);
 
+}
+
+async function checkFinishLast(user: string, pass: string, url: string, job: string): Promise<boolean> {
+    do {
+
+        var response = await WebRequest.get(url + 'job/' + job + '/lastBuild/api/json', {
+            auth: {
+                user: user,
+                pass: pass
+            }
+        });
+
+        var jsonResponse = JSON.parse(response.content);
+
+        console.log('construyendo: ' + jsonResponse.building);
+
+        if (jsonResponse.building === false) {
+
+            vscode.window.showInformationMessage('Resultado: ' + jsonResponse.result);
+            return true;
+
+        }
+
+        await delay(5000);
+
+    } while (true);
+
+    return false;
+
+}
+
+function delay(milliseconds: number) {
+    return new Promise<void>(resolve => {
+        setTimeout(resolve, milliseconds);
+    });
 }
