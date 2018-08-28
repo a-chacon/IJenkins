@@ -1,11 +1,11 @@
 {
     "name": "jint",
     "displayName": "jenkintegration",
-    "description": "Integracion of jenkins to visual code",
+    "description": "Integration of jenkins to visual code",
     "version": "0.0.1",
     "publisher": "AndresC",
     "engines": {
-        "vscode": "^1.26.0"
+        "vscode": "^1.23.1"
     },
     "categories": [
         "Other"
@@ -14,8 +14,7 @@
     "activationEvents": [
         "onCommand:extension.configJenkinsCredentials",
         "onCommand:extension.excecuteJenkinsJob",
-        "onCommand:extension.excecuteJenkinsJob",
-        "onCommand:extension.informationOfLastBuild",
+        "onCommand:extension.excecuteLastJenkinsJob",
         "onCommand:extension.changeURL"
     ],
     "main": "./out/extension",
@@ -32,10 +31,6 @@
             {
                 "command": "extension.excecuteLastJenkinsJob",
                 "title": "Excecute last jenkins job"
-            },
-            {
-                "command": "extension.informationOfLastBuild",
-                "title": "View information of last build"
             },
             {
                 "command": "extension.changeURL",
