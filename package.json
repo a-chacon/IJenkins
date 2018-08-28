@@ -1,7 +1,7 @@
 {
     "name": "jint",
     "displayName": "jenkintegration",
-    "description": "Integration of jenkins to visual code",
+    "description": "Execute jenkins jobs from vsce",
     "version": "0.0.1",
     "publisher": "AndresC",
     "engines": {
