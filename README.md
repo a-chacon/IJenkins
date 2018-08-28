@@ -1,42 +1,31 @@
 # jint README
 
-Extension para visual studio code con la cual puedes ejecutar trabajos de jenkins.
+Extension para visual studio code con la cual puedes construir proyectos de jenkins.
 
 ## Features
 
-La extension cuenta con las siguientes funciones:
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
 
 
 ## Requirements
 
-Para una instalacion manual se debe instalar la libreria web-request definida en package.json dependencias.
-
 1.Copiar archivos en:
 
--Windows %USERPROFILE%\.vscode\extensions
--macOS ~/.vscode/extensions
--Linux ~/.vscode/extensions
+Windows %USERPROFILE%\.vscode\extensions
 
-2.npm install
+macOS ~/.vscode/extensions
 
-3. configurar tu url de jenkins en out/extension.js variable : const URL
+Linux ~/.vscode/extensions
+
+2.npm install (para instalar paquetes node necesarios)
+
 
 ## Extension Settings
 
-Para configurar la url del jenkins en el cual se van a ejecutar los trabajos debes modificar la constante URL definida en src/extension.ts
+Configurar tu url de jenkins en out/extension.js variable : const URL para que quede por defecto
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+o
 
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+usar comando 'Change jenkins URL' (Esto solo sera durante el periodo que este activa la extension)
 
 ## Known Issues
 
@@ -51,14 +40,6 @@ Users appreciate release notes as you update your extension.
 Primera version con funciones principales.
 
 -----------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
 
 ### For more information
 
