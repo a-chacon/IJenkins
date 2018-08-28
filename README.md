@@ -2,11 +2,10 @@
 
 Extension para visual studio code con la cual puedes construir proyectos de jenkins.
 
-## Features
-
-
-
 ## Requirements
+
+prerequisitos: 
+    -npm instalado.
 
 1.Copiar archivos en:
 
@@ -16,7 +15,7 @@ macOS ~/.vscode/extensions
 
 Linux ~/.vscode/extensions
 
-2.npm install (para instalar paquetes node necesarios)
+2.npm install (para instalar paquetes node necesarios definidos en package.json )
 
 
 ## Extension Settings
