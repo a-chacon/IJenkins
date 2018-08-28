@@ -21,7 +21,7 @@ function activate(context) {
     console.log('Congratulations, your extension "jint" is now active!');
     //global variables while the extension is active
     //put here your jenkins url
-    var URL = 'http://www.mycognitiva.io:8080/';
+    var URL = '';
     var USER;
     var PASS;
     var LAST_VIEW;
@@ -32,16 +32,21 @@ function activate(context) {
     // The commandId parameter must match the command field in package.json
     vscode.commands.registerCommand('extension.configJenkinsCredentials', () => __awaiter(this, void 0, void 0, function* () {
         //user and token for jenkins
+        if (util_1.isUndefined(URL) || URL === '') {
+            vscode.window.showWarningMessage('You need set up an url first!');
+            vscode.commands.executeCommand('extension.changeURL');
+            return;
+        }
         USER = yield vscode.window.showInputBox({ placeHolder: 'User' });
         PASS = yield vscode.window.showInputBox({ password: true, placeHolder: 'Password' });
         if (USER === '' || PASS === '') {
-            vscode.window.showErrorMessage('Error, user or token null');
+            vscode.window.showErrorMessage('Error, user or pass null');
             USER = '';
             PASS = '';
             return;
         }
         if (util_1.isUndefined(USER) || util_1.isUndefined(PASS)) {
-            vscode.window.showErrorMessage('Error, user or token undefined');
+            vscode.window.showErrorMessage('Error, user or pass undefined');
             USER = '';
             PASS = '';
             return;
@@ -69,8 +74,8 @@ function activate(context) {
     vscode.commands.registerCommand('extension.excecuteJenkinsJob', () => __awaiter(this, void 0, void 0, function* () {
         //excecute a jenkins job
         //check if is a account config
-        if (!checkConfigCredentials(USER, PASS)) {
-            vscode.window.showWarningMessage('You need set up an account first!');
+        if (!checkConfigCredentials(USER, PASS, URL)) {
+            vscode.window.showWarningMessage('You need set up url and credentials first!');
             vscode.commands.executeCommand('extension.configJenkinsCredentials');
             return;
         }
@@ -111,8 +116,9 @@ function activate(context) {
     }));
     vscode.commands.registerCommand('extension.excecuteLastJenkinsJob', () => __awaiter(this, void 0, void 0, function* () {
         //check if is a account config
-        if (!checkConfigCredentials(USER, PASS)) {
-            vscode.window.showWarningMessage('You need set up an account first!');
+        if (!checkConfigCredentials(USER, PASS, URL)) {
+            vscode.window.showWarningMessage('You need set up url and credentials first!');
+            vscode.commands.executeCommand('extension.configJenkinsCredentials');
             return;
         }
         //confirm the excecute
@@ -249,9 +255,9 @@ function excecuteJob(view, job, user, pass, url, crumb) {
         return false;
     });
 }
-function checkConfigCredentials(user, pass) {
+function checkConfigCredentials(user, pass, url) {
     if (user === '' || pass === '' || util_1.isUndefined(user) ||
-        util_1.isUndefined(pass)) {
+        util_1.isUndefined(pass) || url === '' || util_1.isUndefined(url)) {
         return false;
     }
     return true;
