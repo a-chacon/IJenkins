@@ -72,6 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
         //check if is a account config
         if (!checkConfigCredentials(USER, PASS)) {
             vscode.window.showWarningMessage('You need set up an account first!');
+            vscode.commands.executeCommand('extension.configJenkinsCredentials');
             return;
         }
 
@@ -92,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         //confirm the excecute
-        var confirm = await vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
+        var confirm = await vscode.window.showInputBox({ placeHolder: "Write 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
 
 
         if (confirm === 'yes') {
@@ -127,7 +128,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         //confirm the excecute
-        var confirm = await vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
+        var confirm = await vscode.window.showInputBox({ placeHolder: "Write 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
 
         if (confirm === 'yes') {
             vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Building...' }, p => {
@@ -152,22 +153,16 @@ export function activate(context: vscode.ExtensionContext) {
 
     });
 
-    vscode.commands.registerCommand('extension.jenkinsHelp', async () => {
-        //list of commands avalaible
-        
-        vscode.window.showQuickPick(vscode.commands.getCommands(true));
-        
-        console.log('commands : ' + typeof(vscode.commands.getCommands(true)));
-
-    });
-
 
     vscode.commands.registerCommand('extension.changeURL', async () => {
 
         //confirm the excecute
-        URL = await vscode.window.showInputBox({ placeHolder: "Write the jenkins URL like that 'http://jenkins:8080/'" });
-        if (isUndefined(URL)) {
-            URL = '';
+        var newUrl = await vscode.window.showInputBox({ placeHolder: "Write the jenkins URL like that 'http://jenkins:8080/'" });
+        if (isUndefined(newUrl)) {
+            vscode.window.showInformationMessage('You need to put a correct url');
+            return;
+        }else{
+            URL=newUrl;
         }
 
     });
@@ -300,6 +295,7 @@ async function searchCrumb(user: string, pass: string, url: string): Promise<JSO
 }
 
 async function checkFinishLast(user: string, pass: string, url: string, job: string): Promise<boolean> {
+    var aux:number = 0;
     do {
 
         var response = await WebRequest.get(url + 'job/' + job + '/lastBuild/api/json', {
@@ -321,11 +317,10 @@ async function checkFinishLast(user: string, pass: string, url: string, job: str
         }
 
         await delay(5000);
+        aux+=1;
 
-    } while (true);
-
-    return false;
-
+    } while (aux < 60);
+    
 }
 
 function delay(milliseconds: number) {

@@ -15,17 +15,12 @@
         "onCommand:extension.configJenkinsCredentials",
         "onCommand:extension.excecuteJenkinsJob",
         "onCommand:extension.excecuteJenkinsJob",
-        "onCommand:extension.jenkinsHelp",
         "onCommand:extension.informationOfLastBuild",
         "onCommand:extension.changeURL"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
-            {
-                "command": "extension.jenkinsHelp",
-                "title": "Jenkins help"
-            },
             {
                 "command": "extension.configJenkinsCredentials",
                 "title": "Configuration of jenkin's account"

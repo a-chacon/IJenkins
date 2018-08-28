@@ -71,6 +71,7 @@ function activate(context) {
         //check if is a account config
         if (!checkConfigCredentials(USER, PASS)) {
             vscode.window.showWarningMessage('You need set up an account first!');
+            vscode.commands.executeCommand('extension.configJenkinsCredentials');
             return;
         }
         //select the view
@@ -86,7 +87,7 @@ function activate(context) {
             return;
         }
         //confirm the excecute
-        var confirm = yield vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
+        var confirm = yield vscode.window.showInputBox({ placeHolder: "Write 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
         if (confirm === 'yes') {
             vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Building...' }, p => {
                 return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
@@ -115,7 +116,7 @@ function activate(context) {
             return;
         }
         //confirm the excecute
-        var confirm = yield vscode.window.showInputBox({ placeHolder: "Say 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
+        var confirm = yield vscode.window.showInputBox({ placeHolder: "Write 'yes' for excecute " + LAST_VIEW + '->' + LAST_JOB });
         if (confirm === 'yes') {
             vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Building...' }, p => {
                 return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
@@ -137,16 +138,15 @@ function activate(context) {
             vscode.window.showInformationMessage('Canceled!');
         }
     }));
-    vscode.commands.registerCommand('extension.jenkinsHelp', () => __awaiter(this, void 0, void 0, function* () {
-        //list of commands avalaible
-        vscode.window.showQuickPick(vscode.commands.getCommands(true));
-        console.log('commands : ' + typeof (vscode.commands.getCommands(true)));
-    }));
     vscode.commands.registerCommand('extension.changeURL', () => __awaiter(this, void 0, void 0, function* () {
         //confirm the excecute
-        URL = yield vscode.window.showInputBox({ placeHolder: "Write the jenkins URL like that 'http://jenkins:8080/'" });
-        if (util_1.isUndefined(URL)) {
-            URL = '';
+        var newUrl = yield vscode.window.showInputBox({ placeHolder: "Write the jenkins URL like that 'http://jenkins:8080/'" });
+        if (util_1.isUndefined(newUrl)) {
+            vscode.window.showInformationMessage('You need to put a correct url');
+            return;
+        }
+        else {
+            URL = newUrl;
         }
     }));
     //context.subscriptions.push(disposable);
@@ -270,6 +270,7 @@ function searchCrumb(user, pass, url) {
 }
 function checkFinishLast(user, pass, url, job) {
     return __awaiter(this, void 0, void 0, function* () {
+        var aux = 0;
         do {
             var response = yield WebRequest.get(url + 'job/' + job + '/lastBuild/api/json', {
                 auth: {
@@ -284,8 +285,8 @@ function checkFinishLast(user, pass, url, job) {
                 return true;
             }
             yield delay(5000);
-        } while (true);
-        return false;
+            aux += 1;
+        } while (aux < 60);
     });
 }
 function delay(milliseconds) {
