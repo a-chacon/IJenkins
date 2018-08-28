@@ -287,6 +287,7 @@ function checkFinishLast(user, pass, url, job) {
             yield delay(5000);
             aux += 1;
         } while (aux < 60);
+        return false;
     });
 }
 function delay(milliseconds) {

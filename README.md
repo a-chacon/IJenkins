@@ -2,6 +2,7 @@
 
 Extension para visual studio code con la cual puedes construir proyectos de jenkins.
 
+
 ## Requirements
 
 prerequisitos: 
@@ -26,23 +27,19 @@ o
 
 usar comando 'Change jenkins URL' (Esto solo sera durante el periodo que este activa la extension)
 
-## Known Issues
+## use
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Configurar de forma correcta la URL (ej: 'http://www.mijenkins.com:8080/')
 
-## Release Notes
+Configurar tu cuenta mediante el comando 'configure jenkins account' dentro del editor.
 
-Users appreciate release notes as you update your extension.
+Ejecutar el comando 'Excecute jenkins job' y continua con el flujo.
+
 
 ### 1.0.0
 
 Primera version con funciones principales.
 
 -----------------------------------------------------------------------------------------------------------
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**

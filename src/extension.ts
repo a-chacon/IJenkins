@@ -320,7 +320,7 @@ async function checkFinishLast(user: string, pass: string, url: string, job: str
         aux+=1;
 
     } while (aux < 60);
-    
+    return false;
 }
 
 function delay(milliseconds: number) {
