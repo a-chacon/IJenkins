@@ -34,7 +34,7 @@
             },
             {
                 "command": "extension.changeURL",
-                "title": "change jenkins URL"
+                "title": "Configure jenkins URL"
             }
         ]
     },

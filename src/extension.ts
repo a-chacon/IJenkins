@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('extension.configJenkinsCredentials', async () => {
         //user and token for jenkins
 
-        if(isUndefined(URL)|| URL===''){
+        if (isUndefined(URL) || URL === '') {
             vscode.window.showWarningMessage('You need set up an url first!');
             vscode.commands.executeCommand('extension.changeURL');
             return;
@@ -170,9 +170,11 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showInformationMessage('You need to put a correct url');
             return;
         } else {
-            URL = newUrl;
+            if (await checkUrlConnection(newUrl)) {
+                URL = newUrl;
+                vscode.window.showInformationMessage('New url configureD!');
+            }
         }
-
     });
 
     //context.subscriptions.push(disposable);
@@ -335,4 +337,16 @@ function delay(milliseconds: number) {
     return new Promise<void>(resolve => {
         setTimeout(resolve, milliseconds);
     });
+}
+
+async function checkUrlConnection(url: any): Promise<boolean> {
+    //try to connect to the new url
+    try{
+        await WebRequest.get(url,{throwResponseError: true});
+        return true;
+    }catch(error){
+        vscode.window.showErrorMessage('Dont have response with the new url.');
+        console.log('Error with new url, didnt change');
+        return false;
+    }
 }
