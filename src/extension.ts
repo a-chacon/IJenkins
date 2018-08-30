@@ -170,10 +170,19 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showInformationMessage('You need to put a correct url');
             return;
         } else {
-            if (await checkUrlConnection(newUrl)) {
-                URL = newUrl;
-                vscode.window.showInformationMessage('New url configureD!');
-            }
+            vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Checking...' }, p => {
+                return new Promise(async (resolve, reject) => {
+                    if (await checkUrlConnection(newUrl)) {
+                        URL = newUrl;
+                        vscode.window.showInformationMessage('New url configureD!');
+                        resolve();
+                    }else{
+                        vscode.window.showInformationMessage('We dont have response from this url, set up again!');
+                        resolve();
+                    }
+                });
+            });
+            
         }
     });
 
@@ -340,13 +349,14 @@ function delay(milliseconds: number) {
 }
 
 async function checkUrlConnection(url: any): Promise<boolean> {
+    console.log("probando url")
     //try to connect to the new url
     try{
-        await WebRequest.get(url,{throwResponseError: true});
+        await WebRequest.get(url);
         return true;
     }catch(error){
-        vscode.window.showErrorMessage('Dont have response with the new url.');
-        console.log('Error with new url, didnt change');
+        console.log("Error obteniendo el get");
         return false;
     }
+    
 }
