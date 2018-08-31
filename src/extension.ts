@@ -165,7 +165,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('extension.changeURL', async () => {
 
         //confirm the excecute
-        var newUrl = await vscode.window.showInputBox({ placeHolder: "Write the jenkins URL like that 'http://jenkins:8080/'" });
+        var newUrl = await vscode.window.showInputBox({ placeHolder: "Write the jenkins URL like that 'http://jenkins:8080'" });
         if (isUndefined(newUrl)) {
             vscode.window.showInformationMessage('You need to put a correct url');
             return;
@@ -175,14 +175,15 @@ export function activate(context: vscode.ExtensionContext) {
                     if (await checkUrlConnection(newUrl)) {
                         URL = newUrl;
                         vscode.window.showInformationMessage('New url configureD!');
+                        vscode.commands.executeCommand('extension.configJenkinsCredentials');
                         resolve();
-                    }else{
+                    } else {
                         vscode.window.showInformationMessage('We dont have response from this url, set up again!');
                         resolve();
                     }
                 });
             });
-            
+
         }
     });
 
@@ -221,7 +222,7 @@ async function listViews(user: any, pass: any, url: any): Promise<string[]> {
     //here we need to go to search for the views
     //try to connect with the credentials
     var list = [];
-    var response = await WebRequest.get(url + 'api/json?pretty=true', {
+    var response = await WebRequest.get(url + '/api/json?pretty=true', {
         auth: {
             user: user,
             pass: pass
@@ -246,7 +247,7 @@ async function listJobs(view: any, user: any, pass: any, url: any): Promise<stri
     //here we need to go to search for the views
     //try to connect with the credentials
     var list = [];
-    var response = await WebRequest.get(url + 'view/' + view + '/api/json?pretty=true', {
+    var response = await WebRequest.get(url + '/view/' + view + '/api/json?pretty=true', {
         auth: {
             user: user,
             pass: pass
@@ -269,7 +270,7 @@ async function listJobs(view: any, user: any, pass: any, url: any): Promise<stri
 
 async function excecuteJob(view: any, job: any, user: string, pass: string, url: string, crumb: any): Promise<boolean> {
 
-    var response = await WebRequest.post(url + 'job/' + job + '/build', {
+    var response = await WebRequest.post(url + '/job/' + job + '/build', {
         auth: {
             user: user,
             pass: pass
@@ -301,7 +302,7 @@ function checkConfigCredentials(user: string, pass: string, url: string): boolea
 }
 
 async function searchCrumb(user: string, pass: string, url: string): Promise<JSON> {
-    var response = await WebRequest.get(url + 'crumbIssuer/api/json', {
+    var response = await WebRequest.get(url + '/crumbIssuer/api/json', {
         auth: {
             user: user,
             pass: pass
@@ -316,8 +317,8 @@ async function searchCrumb(user: string, pass: string, url: string): Promise<JSO
 async function checkFinishLast(user: string, pass: string, url: string, job: string): Promise<boolean> {
     var aux: number = 0;
     do {
-
-        var response = await WebRequest.get(url + 'job/' + job + '/lastBuild/api/json', {
+        await delay(5000);
+        var response = await WebRequest.get(url + '/job/' + job + '/lastBuild/api/json', {
             auth: {
                 user: user,
                 pass: pass
@@ -334,8 +335,6 @@ async function checkFinishLast(user: string, pass: string, url: string, job: str
             return true;
 
         }
-
-        await delay(5000);
         aux += 1;
 
     } while (aux < 60);
@@ -349,14 +348,14 @@ function delay(milliseconds: number) {
 }
 
 async function checkUrlConnection(url: any): Promise<boolean> {
-    console.log("probando url")
+    console.log("probando url");
     //try to connect to the new url
-    try{
+    try {
         await WebRequest.get(url);
         return true;
-    }catch(error){
+    } catch (error) {
         console.log("Error obteniendo el get");
         return false;
     }
-    
+
 }
